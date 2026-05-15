@@ -1,0 +1,31 @@
+Flask==3.0.0
+Flask-CORS==4.0.0
+firebase-admin==6.2.0
+opencv-python>=4.8.1,<4.9.0
+opencv-contrib-python>=4.8.0  # Extended OpenCV features
+insightface>=0.7.0  # Main face recognition library
+onnxruntime>=1.15.0  # Required by InsightFace for model inference
+numpy>=1.26.0,<2.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+Pillow>=10.1.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+gunicorn==21.2.0
+cloudinary>=1.36.0
+ultralytics>=8.0.0  # YOLO models for object detection
+filterpy>=1.4.5  # Kalman filtering (optional, for advanced tracking)
+tzdata
+pytz>=2024.1
+
+# Note: If you see dependency conflicts with globally installed packages
+# (tensorflow, opencv-python-headless, etc.), those are not part of this project.
+# Consider using a virtual environment to isolate dependencies.
+
+# InsightFace is OPTIONAL - install separately if needed for face recognition
+# On Windows, you need Visual C++ Build Tools first:
+# 1. Download: https://visualstudio.microsoft.com/visual-cpp-build-tools/
+# 2. Install "C++ build tools" workload
+# 3. Then run: pip install insightface
+# 
+# Without InsightFace: Crowd detection will work, but face recognition will be disabled

@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is authority
+    function isAuthority() {
+      // IMPORTANT: avoid permission failures when users/{uid} is missing.
+      // Prefer custom token role if available, else fall back to users doc when it exists.
+      return isAuthenticated() && (
+        request.auth.token.role == 'authority' ||
+        (
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'authority'
+        )
+      );
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // CCTV Cameras collection
+    match /cctv_cameras/{cameraId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthority();
+    }
+    
+    // Alerts collection
+    match /alerts/{alertId} {
+      // Citizens can only read published alerts
+      allow read: if isAuthenticated() && (
+        isAuthority() || 
+        resource.data.published == true
+      );
+      allow create, update, delete: if isAuthority();
+    }
+    
+    // Missing Persons collection
+    match /missing_persons/{personId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthority();
+      allow delete: if isAuthority();
+    }
+
+    // Notifications collection (face detections + found updates)
+    match /notifications/{notificationId} {
+      // Authorities can read all notifications.
+      // Citizens can read only their own notifications (user_id == uid).
+      allow read: if isAuthenticated() && (
+        isAuthority() ||
+        resource.data.user_id == request.auth.uid
+      );
+
+      // Optional: allow citizens to mark their own notifications read.
+      allow update: if isAuthenticated() &&
+        resource.data.user_id == request.auth.uid &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['read', 'read_at']);
+
+      // Writes are performed by backend (admin SDK) for creates/updates.
+      allow create, delete: if isAuthority();
+    }
+  }
+}
+

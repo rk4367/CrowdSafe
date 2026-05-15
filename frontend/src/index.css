@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Fix Leaflet map z-index to prevent overlap with modals */
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+.leaflet-pane {
+  z-index: 0 !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 0 !important;
+}
+
+/* Ensure modals appear above maps */
+[style*="z-index: 9999"],
+[style*="z-index: 10000"] {
+  z-index: 9999 !important;
+}
+
+/* Reduce Leaflet popup size */
+.leaflet-popup-content-wrapper {
+  max-width: 200px !important;
+  max-height: 300px !important;
+  padding: 4px !important;
+}
+
+.leaflet-popup-content {
+  margin: 8px 10px !important;
+  line-height: 1.4 !important;
+  font-size: 12px !important;
+}
+
+.leaflet-popup-content h3 {
+  font-size: 14px !important;
+  margin-bottom: 4px !important;
+}
+
+.leaflet-popup-content p {
+  margin-bottom: 2px !important;
+  font-size: 11px !important;
+}
+
